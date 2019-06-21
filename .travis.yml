@@ -4,6 +4,28 @@ node_js:
 script:
   - echo ${TRAVIS_BRANCH}
   - echo $TRAVIS_BRANCH
+  
+  - if [ "$TRAVIS" == "true" ]; then
+       #resolving `detached HEAD` by attaching HEAD to the `TRAVIS_FROM_BRANCH` branch
+       TRAVIS_FROM_BRANCH="travis_from_branch"
+       git branch $TRAVIS_FROM_BRANCH
+       git checkout $TRAVIS_FROM_BRANCH
+       
+       #fetching `TRAVIS_BRANCH` branch
+       git fetch origin $TRAVIS_BRANCH
+       git checkout -qf FETCH_HEAD
+       git branch $TRAVIS_BRANCH
+       git checkout $TRAVIS_BRANCH
+       
+       #switch to `TRAVIS_FROM_BRANCH`
+       git checkout $TRAVIS_FROM_BRANCH
+    fi
+    
+  - git diff HEAD^^
+  
+  - git diff -z --diff-filter=AMCR --name-only HEAD^^ *.js
+  
+  - git show
 
   - git diff -z --diff-filter=AMCR --name-only HEAD^^ *.js | xargs -0 npm run lint --
   
