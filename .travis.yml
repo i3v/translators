@@ -11,9 +11,10 @@ script:
   - git checkout $TRAVIS_FROM_BRANCH
        
   - git fetch --all 
+  - git pull --all
   - git fetch origin $TRAVIS_BRANCH
   - git checkout -qf FETCH_HEAD
-  - git branch $TRAVIS_BRANCH
+
   - git checkout $TRAVIS_BRANCH
        
   - git checkout $TRAVIS_FROM_BRANCH
