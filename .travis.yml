@@ -1,40 +1,9 @@
 language: node_js
-git:
-  depth: false
 node_js:
   - "8"
 script:
-  - echo ${TRAVIS_BRANCH}
-  - git remote -v
-  - git branch -v
-  
-  - git fetch origin '+refs/heads/*:refs/heads/*'  
-  - git branch -v
-  
-  - git fetch origin '+refs/heads/*:refs/heads/*'  
-  
   - git checkout --detach
   - git fetch origin '+refs/heads/*:refs/heads/*'
-  - git branch -v
-    
-  - git diff HEAD^^
-  
-  - git diff $TRAVIS_COMMIT_RANGE
-  
-  
-  - git diff -z --diff-filter=AMCR --name-only HEAD^^ *.js
-  
-  - git diff -z --diff-filter=AMCR --name-only $TRAVIS_COMMIT_RANGE *.js
-  
-  - git diff -z --diff-filter=AMCR --name-only $TRAVIS_COMMIT_RANGE *.js --
-  
-  - git diff -z --diff-filter=AMCR --name-only $TRAVIS_COMMIT_RANGE -- *.js
-
-  - tmp=$(git diff -z --diff-filter=AMCR --name-only HEAD^^ *.js)
-  
-  - echo &tmp | xargs -0 npm run lint --
-  
-  - git diff -z --diff-filter=AMCR --name-only HEAD^^ *.js | xargs -0 npm run lint --
-  
+  - git diff -z --diff-filter=AMCR --name-only $TRAVIS_COMMIT_RANGE *.js | xargs -0 npm run lint --
   - cd .ci && ./checkDeletedTxt.sh
 cache: npm
