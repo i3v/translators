@@ -8,48 +8,33 @@ script:
   - git remote -v
   - git branch -v
   
-  - TRAVIS_FROM_BRANCH="travis_from_branch"
-  - git branch $TRAVIS_FROM_BRANCH
-  - git checkout $TRAVIS_FROM_BRANCH
-  
-  - git fetch --unshallow
-       
-  - git fetch --all 
-  - git pull --all
-  
-  
-  - git remote set-branches --add origin master
-  
-  - git remote -v
+  - git fetch origin '+refs/heads/*:refs/heads/*'  
   - git branch -v
   
-  - git fetch --all 
+  - git fetch origin '+refs/heads/*:refs/heads/*'  
   
-  - git remote -v
+  - git checkout --detach
+  - git fetch origin '+refs/heads/*:refs/heads/*'
   - git branch -v
-  - git diff origin/master # now works as normal
-  
-  - git pull --all
-  
-  - git remote -v
-  - git branch -v
-  
-  - git diff origin/master # now works as normal
-  
-  - git fetch origin $TRAVIS_BRANCH
-  - git checkout -qf FETCH_HEAD
-
-  - git checkout $TRAVIS_BRANCH
-       
-  - git checkout $TRAVIS_FROM_BRANCH
     
   - git diff HEAD^^
   
+  - git diff $TRAVIS_COMMIT_RANGE
+  
+  
   - git diff -z --diff-filter=AMCR --name-only HEAD^^ *.js
   
-  - git show
+  - git diff -z --diff-filter=AMCR --name-only $TRAVIS_COMMIT_RANGE *.js
+  
+  - git diff -z --diff-filter=AMCR --name-only $TRAVIS_COMMIT_RANGE *.js --
+  
+  - git diff -z --diff-filter=AMCR --name-only $TRAVIS_COMMIT_RANGE -- *.js
 
-  - git diff -z --diff-filter=AMCR --name-only HEAD^^ *.js | xargs -0 npm run lint
+  - tmp=$(git diff -z --diff-filter=AMCR --name-only HEAD^^ *.js)
+  
+  - echo &tmp | xargs -0 npm run lint --
+  
+  - git diff -z --diff-filter=AMCR --name-only HEAD^^ *.js | xargs -0 npm run lint --
   
   - cd .ci && ./checkDeletedTxt.sh
 cache: npm
