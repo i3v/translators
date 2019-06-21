@@ -50,7 +50,7 @@ function doWeb(doc, url) {
 		var results = doc.evaluate('//table[@id="restab"]//tr[@bgcolor = "#f5f5f5"]/td[2]', doc, null, XPathResult.ANY_TYPE, null);
 		var items = {};
 		var result;
-		while (result = results.iterateNext()) {
+		while ((result = results.iterateNext())) {
 			var link = doc.evaluate('./a', result, null, XPathResult.ANY_TYPE, null).iterateNext();
 			var title = link.textContent;
 			var uri = link.href;
@@ -111,8 +111,9 @@ function scrape(doc) {
 	if (!authors.length) {
 		authors = ZU.xpath(datablock, './div[1]/table[1]//b');
 	}
+	
 	for (var i = 0; i < authors.length; i++) {
-
+		
 		/* Some names listed as last first_initials (no comma), so we need
 		to fix this by placing a comma in-between.
 		Also note that the space between last and first is nbsp */
@@ -123,7 +124,7 @@ function scrape(doc) {
 			cleaned = cleaned.replace(/[\u00A0\s]/, ', ');
 			useComma = true;
 		}
-
+		
 		cleaned = ZU.cleanAuthor(cleaned, "author", useComma);
 		// If we have only one name, set the author to one-name mode
 		if (cleaned.firstName === "") {
@@ -131,12 +132,12 @@ function scrape(doc) {
 		} else {
 			// We can check for all lower-case and capitalize if necessary
 			// All-uppercase is handled by cleanAuthor
-			cleaned.firstName = (cleaned.firstName == cleaned.firstName.toLowerCase() || cleaned.firstName == cleaned.firstName.toUpperCase()) ?
-				Zotero.Utilities.capitalizeTitle(cleaned.firstName, true) : 
-				cleaned.firstName;
-			cleaned.lastName = (cleaned.lastName == cleaned.lastName.toLowerCase() || cleaned.lastName == cleaned.lastName.toUpperCase()) ?
-				Zotero.Utilities.capitalizeTitle(cleaned.lastName, true) : 
-				cleaned.lastName;
+			cleaned.firstName = (cleaned.firstName == cleaned.firstName.toLowerCase() || cleaned.firstName == cleaned.firstName.toUpperCase())
+				? Zotero.Utilities.capitalizeTitle(cleaned.firstName, true)
+				: cleaned.firstName;
+			cleaned.lastName = (cleaned.lastName == cleaned.lastName.toLowerCase() || cleaned.lastName == cleaned.lastName.toUpperCase())
+				? Zotero.Utilities.capitalizeTitle(cleaned.lastName, true)
+				: cleaned.lastName;
 		}
 		// Skip entries with an @ sign-- email addresses slip in otherwise
 		if (cleaned.lastName.includes("@")) item.creators.push(cleaned);
@@ -156,7 +157,7 @@ function scrape(doc) {
 		"Цит. в РИНЦ": "extra",
 		"Тип:": "itemType"
 	};
-
+	
 	
 	for (var key in mapping) {
 		var t = ZU.xpathText(doc, '//tr/td/text()[contains(., "' + key + '")]/following-sibling::*[1]');
@@ -174,13 +175,12 @@ function scrape(doc) {
 	if (!item.ISSN) item.ISSN = ZU.xpathText(journalBlock, ".//tr[2]//font[last()]");
 
 	var tags = ZU.xpath(datablock, './div/table[tbody/tr/td/font[contains(text(), "КЛЮЧЕВЫЕ СЛОВА")]]//tr[2]/td/a');
-	for (var i = 0; i < tags.length; i++) {
-		item.tags.push(fixCasing(tags[i].textContent));
+	for (var j = 0; j < tags.length; i++) {
+		item.tags.push(fixCasing(tags[j].textContent));
 	}
 
 	var abstractBlock = ZU.xpath(datablock, "./table[6]")[0];
-	if (abstractBlock)
-		item.abstractNote = ZU.xpathText(abstractBlock, './tbody/tr[2]/td[2]/p');
+	if (abstractBlock) item.abstractNote = ZU.xpathText(abstractBlock, './tbody/tr[2]/td[2]/p');
 
 	// Set type
 	switch (item.itemType) {
@@ -226,6 +226,7 @@ function scrape(doc) {
 
 	item.complete();
 }
+
 /** BEGIN TEST CASES **/
 var testCases = [
 	{
