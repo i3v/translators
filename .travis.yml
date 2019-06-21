@@ -4,6 +4,6 @@ node_js:
 script:
   - git remote set-branches --add origin $TRAVIS_BRANCH
   - git fetch
-  - git diff -z --diff-filter=AM --name-only HEAD..$TRAVIS_BRANCH *.js | xargs -0 npm run lint --
+  - git diff -z --diff-filter=AMCR --name-only origin/$TRAVIS_BRANCH *.js | xargs -0 npm run lint --
   - cd .ci && ./checkDeletedTxt.sh
 cache: npm
