@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsbv",
-	"lastUpdated": "2019-06-21 09:32:13"
+	"lastUpdated": "2019-06-21 22:52:13"
 }
 
 /*
@@ -39,7 +39,7 @@
 function detectWeb(doc, url) {
 	if (url.match(/\/item.asp/)) {
 		return "journalArticle";
-	} 
+	}
 	else if (url.match(/\/(query_results|contents|org_items|itembox_items)\.asp/)) {
 		return "multiple";
 	}
@@ -66,7 +66,7 @@ function doWeb(doc, url) {
 			}
 			Zotero.Utilities.processDocuments(articles, scrape);
 		});
-	} 
+	}
 	else {
 		scrape(doc);
 	}
@@ -104,7 +104,7 @@ function scrape(doc) {
 	var m = doc.title.match(/eLIBRARY.RU - (.*)/);
 	if (m) {
 		item.title = m[1];
-	} 
+	}
 	else {
 		item.title = doc.title;
 	}
@@ -116,8 +116,8 @@ function scrape(doc) {
 	}
 	
 	Zotero.debug('authors.length: ' + authors.length);
-	Zotero.debug('authors text: ' + ZU.xpathText(authors,'*'));
-	
+	Zotero.debug('authors text: ' + ZU.xpathText(authors, '*'));
+
 	for (var i = 0; i < authors.length; i++) {
 		
 		/* Some names listed as last first_initials (no comma), so we need
@@ -134,8 +134,9 @@ function scrape(doc) {
 		cleaned = ZU.cleanAuthor(cleaned, "author", useComma);
 		// If we have only one name, set the author to one-name mode
 		if (cleaned.firstName === "") {
-			cleaned["fieldMode"] = true;
-		} else {
+			cleaned.fieldMode = true;
+		}
+		else {
 			// We can check for all lower-case and capitalize if necessary
 			// All-uppercase is handled by cleanAuthor
 			cleaned.firstName = (cleaned.firstName == cleaned.firstName.toLowerCase() || cleaned.firstName == cleaned.firstName.toUpperCase())
