@@ -1,4 +1,6 @@
 language: node_js
+git:
+  depth: false
 node_js:
   - "8"
 script:
@@ -9,6 +11,8 @@ script:
   - TRAVIS_FROM_BRANCH="travis_from_branch"
   - git branch $TRAVIS_FROM_BRANCH
   - git checkout $TRAVIS_FROM_BRANCH
+  
+  - git fetch --unshallow
        
   - git fetch --all 
   - git pull --all
@@ -45,7 +49,7 @@ script:
   
   - git show
 
-  - git diff -z --diff-filter=AMCR --name-only HEAD^^ *.js | xargs -0 npm run lint --
+  - git diff -z --diff-filter=AMCR --name-only HEAD^^ *.js | xargs -0 npm run lint
   
   - cd .ci && ./checkDeletedTxt.sh
 cache: npm
