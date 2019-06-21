@@ -70,14 +70,14 @@ function doWeb(doc, url) {
 	}
 }
 
-function fixCasing (string) {
+function fixCasing(string) {
 	if (string && string == string.toUpperCase()) {
 		return ZU.capitalizeTitle(string, true);
 	}
 	else return string;
 }
 
-function scrape (doc) {
+function scrape(doc) {
 		var datablock = ZU.xpath(doc, '//td[@align="left" and @valign="top"]//tr[2]/td[@align="left" and @valign="top"]');
 		var item = new Zotero.Item();
 		/*var pdf = false;
