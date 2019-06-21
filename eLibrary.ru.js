@@ -36,7 +36,7 @@
 	***** END LICENSE BLOCK *****
 */
 
-function detectWeb(doc, url){
+function detectWeb(doc, url) {
 	if (url.match(/\/item.asp/)) {
 		return "journalArticle";
 	} else if (url.match(/\/(query_results|contents|org_items|itembox_items)\.asp/)){
@@ -44,30 +44,30 @@ function detectWeb(doc, url){
 	}
 }
 
-function doWeb(doc, url){
+function doWeb(doc, url) {
 	var articles = [];
 	if (detectWeb(doc, url) == "multiple") {
-		var results = doc.evaluate('//table[@id="restab"]//tr[@bgcolor = "#f5f5f5"]/td[2]', doc, null,XPathResult.ANY_TYPE, null);
+		var results = doc.evaluate('//table[@id="restab"]//tr[@bgcolor = "#f5f5f5"]/td[2]', doc, null, XPathResult.ANY_TYPE, null);
 		var items = {};
 		var result;
-		while (result = results.iterateNext()) {
-			var link = doc.evaluate('./a', result, null,XPathResult.ANY_TYPE, null).iterateNext();
+		while ((result = results.iterateNext()) != null) {
+			var link = doc.evaluate('./a', result, null, XPathResult.ANY_TYPE, null).iterateNext();
 			var title = link.textContent;
 			var uri = link.href;
 			items[uri] = title;
 		}
 		Zotero.selectItems(items, function (items) {
-				if (!items) {
-					return true;
-				}
-				for (var i in items) {
-					articles.push(i);
-				}
-				Zotero.Utilities.processDocuments(articles, scrape);
+			if (!items) {
+				return true;
+			}
+			for (var i in items) {
+				articles.push(i);
+			}
+			Zotero.Utilities.processDocuments(articles, scrape);
 		});
-		} else {
-			scrape(doc);
-		}
+	} else {
+		scrape(doc);
+	}
 }
 
 function fixCasing (string) {
