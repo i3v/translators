@@ -3,14 +3,14 @@ node_js:
   - "8"
 script:
   - echo ${TRAVIS_BRANCH}
-  - echo $TRAVIS_BRANCH
-  
+  - git remote -v
+  - git branch -v
   
   - TRAVIS_FROM_BRANCH="travis_from_branch"
   - git branch $TRAVIS_FROM_BRANCH
   - git checkout $TRAVIS_FROM_BRANCH
        
-  
+  - git fetch --all 
   - git fetch origin $TRAVIS_BRANCH
   - git checkout -qf FETCH_HEAD
   - git branch $TRAVIS_BRANCH
