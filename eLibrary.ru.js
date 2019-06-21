@@ -34,7 +34,7 @@
 	along with Zotero. If not, see <http://www.gnu.org/licenses/>.
 
 	***** END LICENSE BLOCK *****
-*/
+*/ 
 
 function detectWeb(doc, url) {
 	if (url.match(/\/item.asp/)) {
