@@ -39,7 +39,8 @@
 function detectWeb(doc, url) {
 	if (url.match(/\/item.asp/)) {
 		return "journalArticle";
-	} else if (url.match(/\/(query_results|contents|org_items|itembox_items)\.asp/)) {
+	} 
+	else if (url.match(/\/(query_results|contents|org_items|itembox_items)\.asp/)) {
 		return "multiple";
 	}
 }
@@ -65,7 +66,8 @@ function doWeb(doc, url) {
 			}
 			Zotero.Utilities.processDocuments(articles, scrape);
 		});
-	} else {
+	} 
+	else {
 		scrape(doc);
 	}
 }
@@ -102,7 +104,8 @@ function scrape(doc) {
 	var m = doc.title.match(/eLIBRARY.RU - (.*)/);
 	if (m) {
 		item.title = m[1];
-	} else {
+	} 
+	else {
 		item.title = doc.title;
 	}
 	item.title = fixCasing(item.title);
@@ -111,6 +114,9 @@ function scrape(doc) {
 	if (!authors.length) {
 		authors = ZU.xpath(datablock, './div[1]/table[1]//b');
 	}
+	
+	Zotero.debug('authors.length: ' + authors.length);
+	Zotero.debug('authors text: ' + ZU.xpathText(authors,'*'));
 	
 	for (var i = 0; i < authors.length; i++) {
 		
@@ -128,7 +134,7 @@ function scrape(doc) {
 		cleaned = ZU.cleanAuthor(cleaned, "author", useComma);
 		// If we have only one name, set the author to one-name mode
 		if (cleaned.firstName === "") {
-			cleaned.fieldMode = true;
+			cleaned["fieldMode"] = true;
 		} else {
 			// We can check for all lower-case and capitalize if necessary
 			// All-uppercase is handled by cleanAuthor
@@ -140,7 +146,7 @@ function scrape(doc) {
 				: cleaned.lastName;
 		}
 		// Skip entries with an @ sign-- email addresses slip in otherwise
-		if (cleaned.lastName.includes("@")) item.creators.push(cleaned);
+		if (!cleaned.lastName.includes("@")) item.creators.push(cleaned);
 	}
 
 
@@ -175,7 +181,7 @@ function scrape(doc) {
 	if (!item.ISSN) item.ISSN = ZU.xpathText(journalBlock, ".//tr[2]//font[last()]");
 
 	var tags = ZU.xpath(datablock, './div/table[tbody/tr/td/font[contains(text(), "КЛЮЧЕВЫЕ СЛОВА")]]//tr[2]/td/a');
-	for (var j = 0; j < tags.length; i++) {
+	for (var j = 0; j < tags.length; j++) {
 		item.tags.push(fixCasing(tags[j].textContent));
 	}
 
@@ -185,6 +191,7 @@ function scrape(doc) {
 	// Set type
 	switch (item.itemType) {
 		case "обзорная статья": // Would be "review article"
+		case "статья в журнале - научная статья":
 		case "научная статья":
 		case "статья в журнале":
 			item.itemType = "journalArticle";
