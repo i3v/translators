@@ -112,11 +112,11 @@ function scrape(doc) {
 		authors = ZU.xpath(datablock, './div[1]/table[1]//b');
 	}
 	for (var i = 0; i < authors.length; i++) {
+
+		/* Some names listed as last first_initials (no comma), so we need
+		to fix this by placing a comma in-between.
+		Also note that the space between last and first is nbsp */
 		
-		/** Some names listed as last first_initials (no comma), so we need
-		 *  to fix this by placing a comma in-between.
-		 *  Also note that the space between last and first is nbsp */
-		 
 		var cleaned = authors[i].textContent;
 		var useComma = false;
 		if (cleaned.match(/[\s\u00A0]([A-Z\u0400-\u042f]\.?[\s\u00A0]*)+$/)) {
@@ -127,32 +127,34 @@ function scrape(doc) {
 		cleaned = ZU.cleanAuthor(cleaned, "author", useComma);
 		// If we have only one name, set the author to one-name mode
 		if (cleaned.firstName === "") {
-			cleaned["fieldMode"] = true;
+			cleaned.fieldMode = true;
 		} else {
 			// We can check for all lower-case and capitalize if necessary
 			// All-uppercase is handled by cleanAuthor
-			cleaned.firstName = (cleaned.firstName == cleaned.firstName.toLowerCase() || cleaned.firstName == cleaned.firstName.toUpperCase() ) ?
-				Zotero.Utilities.capitalizeTitle(cleaned.firstName, true) : cleaned.firstName;
+			cleaned.firstName = (cleaned.firstName == cleaned.firstName.toLowerCase() || cleaned.firstName == cleaned.firstName.toUpperCase()) ?
+				Zotero.Utilities.capitalizeTitle(cleaned.firstName, true) : 
+				cleaned.firstName;
 			cleaned.lastName = (cleaned.lastName == cleaned.lastName.toLowerCase() || cleaned.lastName == cleaned.lastName.toUpperCase()) ?
-				Zotero.Utilities.capitalizeTitle(cleaned.lastName, true) : cleaned.lastName;
+				Zotero.Utilities.capitalizeTitle(cleaned.lastName, true) : 
+				cleaned.lastName;
 		}
 		// Skip entries with an @ sign-- email addresses slip in otherwise
-		if (cleaned.lastName.indexOf("@") === -1) item.creators.push(cleaned);
+		if (cleaned.lastName.includes("@")) item.creators.push(cleaned);
 	}
 
 
 	var mapping = {
-		"Журнал:" : "publicationTitle",
-		"Издательство" : "publisher",
-		"Год:" : "date",// "Год выпуска:": "Год издания:"
-		"Том" : "volume",
-		"Номер:" : "issue",
-		"ISSN:" : "ISSN",
-		"Страницы" : "pages",
-		"Язык:" : "language",
-		"Место издания" : "place",
-		"Цит. в РИНЦ" : "extra",
-		"Тип:" : "itemType"
+		"Журнал:": "publicationTitle",
+		"Издательство": "publisher",
+		"Год:": "date", // "Год выпуска:": "Год издания:"
+		"Том": "volume",
+		"Номер:": "issue",
+		"ISSN:": "ISSN",
+		"Страницы": "pages",
+		"Язык:": "language",
+		"Место издания": "place",
+		"Цит. в РИНЦ": "extra",
+		"Тип:": "itemType"
 	};
 
 	
@@ -172,7 +174,7 @@ function scrape(doc) {
 	if (!item.ISSN) item.ISSN = ZU.xpathText(journalBlock, ".//tr[2]//font[last()]");
 
 	var tags = ZU.xpath(datablock, './div/table[tbody/tr/td/font[contains(text(), "КЛЮЧЕВЫЕ СЛОВА")]]//tr[2]/td/a');
-	for (var i = 0; i<tags.length; i++) {
+	for (var i = 0; i < tags.length; i++) {
 		item.tags.push(fixCasing(tags[i].textContent));
 	}
 
@@ -195,19 +197,19 @@ function scrape(doc) {
 			item.itemType = "conferencePaper";
 			break;
 		default:
-			Zotero.debug("Unknown type: "+item.itemType+". Using 'journalArticle'");
+			Zotero.debug("Unknown type: " + item.itemType + ". Using 'journalArticle'");
 			item.itemType = "journalArticle";
 			break;
 	}
 
-	/*if (referenceBlock) {
+	/* if (referenceBlock) {
 		var note = Zotero.Utilities.trimInternal(
 						doc.evaluate('./tbody/tr/td[2]/table', referenceBlock, null,XPathResult.ANY_TYPE, null)
 						.iterateNext().textContent);
 		Zotero.debug(note);
 		item.notes.push(note);
 	}*/
-/*
+	/*
 	if (codeBlock) {
 		item.extra += ' '+ doc.evaluate('.//td[2]', codeBlock, null,XPathResult.ANY_TYPE, null).iterateNext().textContent;
  		var doi = item.extra.match(/DOI: (10\.[^\s]+)/);
@@ -220,7 +222,7 @@ function scrape(doc) {
 
 */
 
-	//if (pdf) item.attachments.push(pdf);
+	// if (pdf) item.attachments.push(pdf);
 
 	item.complete();
 }
