@@ -2,6 +2,6 @@ language: node_js
 node_js:
   - "8"
 script:
-  - git diff -z --name-only origin/master..$TRAVIS_BRANCH *.js | xargs -0 npm run lint --
+  - git diff -z --diff-filter=AM --name-only HEAD..$TRAVIS_BRANCH *.js | xargs -0 npm run lint --
   - cd .ci && ./checkDeletedTxt.sh
 cache: npm
