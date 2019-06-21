@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsbv",
-	"lastUpdated": "2017-05-19 04:15:03"
+	"lastUpdated": "2019-06-21 09:32:13"
 }
 
 /*
@@ -105,8 +105,8 @@ function scrape (doc) {
 			item.title = doc.title;
 		}
 		item.title = fixCasing(item.title);
-		var title = ZU.xpathText(datablock, "./table[1]");
-		var authors =   ZU.xpath(datablock, './div[1]/table[1]//span/a[contains(@href, "authorid")]');
+		
+		var authors = ZU.xpath(doc, '//table[@width=550]//td[@width=514]/span[@style="white-space: nowrap"]//b');
 		if (!authors.length) {
 			authors = ZU.xpath(datablock, './div[1]/table[1]//b');
 		}
@@ -140,18 +140,20 @@ function scrape (doc) {
 
 
 		var mapping = {
-			"Журнал" : "publicationTitle",
+			"Журнал:" : "publicationTitle",
 			"Издательство" : "publisher",
-			"Год" : "date",// "Год выпуска:": "Год издания:"
+			"Год:" : "date",// "Год выпуска:": "Год издания:"
 			"Том" : "volume",
-			"Номер" : "issue",
-			"ISSN" : "ISSN",
+			"Номер:" : "issue",
+			"ISSN:" : "ISSN",
 			"Страницы" : "pages",
-			"Язык" : "language",
+			"Язык:" : "language",
 			"Место издания" : "place",
 			"Цит. в РИНЦ" : "extra",
-			"Тип " : "itemType"
+			"Тип:" : "itemType"
 		};
+
+		
 		for (var key in mapping) {
 			var t = ZU.xpathText(doc, '//tr/td/text()[contains(., "' + key + '")]/following-sibling::*[1]');
 			if (t) {
@@ -291,7 +293,7 @@ var testCases = [
 				],
 				"date": "2012",
 				"ISSN": "2219-5335",
-				"issue": "13",
+				"issue": "13 (1)",
 				"language": "русский",
 				"libraryCatalog": "eLibrary.ru",
 				"pages": "1-10",
