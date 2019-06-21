@@ -12,6 +12,26 @@ script:
        
   - git fetch --all 
   - git pull --all
+  
+  
+  - git remote set-branches --add origin master
+  
+  - git remote -v
+  - git branch -v
+  
+  - git fetch --all 
+  
+  - git remote -v
+  - git branch -v
+  - git diff origin/master # now works as normal
+  
+  - git pull --all
+  
+  - git remote -v
+  - git branch -v
+  
+  - git diff origin/master # now works as normal
+  
   - git fetch origin $TRAVIS_BRANCH
   - git checkout -qf FETCH_HEAD
 
