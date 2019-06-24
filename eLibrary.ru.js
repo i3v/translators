@@ -152,17 +152,17 @@ function scrape(doc) {
 
 
 	var mapping = {
-		"Журнал:": "publicationTitle",
+		"Журнал": "publicationTitle",
 		"Издательство": "publisher",
-		"Год:": "date", // "Год выпуска:": "Год издания:"
+		"Год": "date", // "Год выпуска:": "Год издания:"
 		"Том": "volume",
-		"Номер:": "issue",
-		"ISSN:": "ISSN",
+		"Номер": "issue",
+		"ISSN": "ISSN",
 		"Страницы": "pages",
-		"Язык:": "language",
+		"Язык": "language",
 		"Место издания": "place",
 		"Цит. в РИНЦ": "extra",
-		"Тип:": "itemType"
+		"Тип": "itemType"
 	};
 	
 	
