@@ -90,6 +90,9 @@ function getDocType(doc) {
 		case "статья в открытом архиве":
 			itemType = "journalArticle";
 			break;
+		case "статья в сборнике трудов конференции":
+			itemType = "conferencePaper";
+			break;
 		case "учебное пособие":
 		case "монография":
 			itemType = "book";
@@ -582,6 +585,48 @@ var testCases = [
 						"tag": "Сублоренцева Структура"
 					}
 				],
+				"notes": [],
+				"seeAlso": []
+			}
+		]
+	},
+	{
+		"type": "web",
+		"url": "https://elibrary.ru/item.asp?id=30694319",
+		"items": [
+			{
+				"itemType": "conferencePaper",
+				"title": "Intellectual Differentiation in the Structure of Students' Civil Identity",
+				"creators": [
+					{
+						"firstName": "M. K.",
+						"lastName": "Akimova",
+						"creatorType": "author"
+					},
+					{
+						"firstName": "E. I.",
+						"lastName": "Gorbacheva",
+						"creatorType": "author"
+					},
+					{
+						"firstName": "S. v.",
+						"lastName": "Persiyantseva",
+						"creatorType": "author"
+					},
+					{
+						"firstName": "S. v.",
+						"lastName": "Yaroshevskaya",
+						"creatorType": "author"
+					}
+				],
+				"date": "2017",
+				"DOI": "10.15405/epsbs.2017.12.1",
+				"language": "en",
+				"libraryCatalog": "eLibrary.ru",
+				"pages": "1-7",
+				"url": "https://elibrary.ru/item.asp?id=30694319",
+				"attachments": [],
+				"tags": [],
 				"notes": [],
 				"seeAlso": []
 			}
