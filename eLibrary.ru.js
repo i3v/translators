@@ -376,14 +376,68 @@ var testCases = [
 						"creatorType": "author"
 					}
 				],
-				"date": "14.06.2002"
-				"pages": "83"
+				"date": "14.06.2002",
 				"issue": "097",
 				"language": "ru",
 				"libraryCatalog": "eLibrary.ru",
+				"pages": "83",
 				"url": "https://elibrary.ru/item.asp?id=21640363",
 				"attachments": [],
 				"tags": [],
+				"notes": [],
+				"seeAlso": []
+			}
+		]
+	},
+	{
+		"type": "web",
+		"url": "https://elibrary.ru/item.asp?id=21665052",
+		"items": [
+			{
+				"itemType": "journalArticle",
+				"title": "Информационно-поисковая полнотекстовая система \"Боярские списки XVIII века\"",
+				"creators": [
+					{
+						"firstName": "А. В.",
+						"lastName": "Захаров",
+						"creatorType": "author"
+					}
+				],
+				"date": "08.04.2005",
+				"issue": "0220510249",
+				"language": "ru",
+				"libraryCatalog": "eLibrary.ru",
+				"url": "https://elibrary.ru/item.asp?id=21665052",
+				"attachments": [],
+				"tags": [
+					{
+						"tag": "Археография"
+					},
+					{
+						"tag": "Боярские Списки"
+					},
+					{
+						"tag": "Информационная Система"
+					},
+					{
+						"tag": "Источниковедение"
+					},
+					{
+						"tag": "Московские Чины"
+					},
+					{
+						"tag": "Петр I"
+					},
+					{
+						"tag": "Полнотекстовая База Данных"
+					},
+					{
+						"tag": "Разрядный Приказ"
+					},
+					{
+						"tag": "Царедворцы"
+					}
+				],
 				"notes": [],
 				"seeAlso": []
 			}
