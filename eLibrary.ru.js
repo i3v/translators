@@ -211,6 +211,19 @@ function scrape(doc, url) {
 			break;
 	}
 
+		// Language to RFC-4646 code
+	switch (item.language) {
+		case "русский":
+			item.language = "ru";
+			break;
+		case "английский":
+			item.language = "en";
+			break;
+		default:
+			Zotero.debug("Unknown language: " + item.language + " - keeping as-is.");
+			break;
+	}
+
 	/* if (referenceBlock) {
 		var note = Zotero.Utilities.trimInternal(
 						doc.evaluate('./tbody/tr/td[2]/table', referenceBlock, null,XPathResult.ANY_TYPE, null)
@@ -260,7 +273,7 @@ var testCases = [
 				"date": "2007",
 				"ISSN": "0320-8095",
 				"issue": "1",
-				"language": "русский",
+				"language": "ru",
 				"libraryCatalog": "eLibrary.ru",
 				"pages": "40-58",
 				"publicationTitle": "Вестник Московского Университета. Серия 13: Востоковедение",
@@ -309,7 +322,7 @@ var testCases = [
 				"date": "2012",
 				"ISSN": "2219-5335",
 				"issue": "13 (1)",
-				"language": "русский",
+				"language": "ru",
 				"libraryCatalog": "eLibrary.ru",
 				"pages": "1-10",
 				"publicationTitle": "Плодоводство И Виноградарство Юга России",
