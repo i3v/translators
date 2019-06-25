@@ -325,7 +325,7 @@ var testCases = [
 				],
 				"date": "2012",
 				"ISSN": "2219-5335",
-				"issue": "13 (1)",
+				"issue": "13 (1)",
 				"language": "ru",
 				"libraryCatalog": "eLibrary.ru",
 				"pages": "1-10",
