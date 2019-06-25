@@ -83,7 +83,7 @@ function getDocType(doc) {
 	docType = ZU.xpathText(doc, '//tr/td/text()[contains(., "Тип:")]/following-sibling::*[1]');
 	
 	switch (docType) {
-		case "обзорная статья": // Would be "review article"
+		case "обзорная статья":
 		case "статья в журнале - научная статья":
 		case "научная статья":
 		case "статья в журнале":
@@ -204,7 +204,7 @@ function scrape(doc, url) {
 	// Times cited in Russian Science Citation Index. 
 	// Hardly useful for most users, would just clutter "extra" field.
 	// Keeping this just-in-case.
-	rsci = ZU.xpathText(doc, '//tr/td/text()[contains(., "Цитирований в РИНЦ")]/following-sibling::*[2]');
+	var rsci = ZU.xpathText(doc, '//tr/td/text()[contains(., "Цитирований в РИНЦ")]/following-sibling::*[2]');
 	Zotero.debug("Russian Science Citation Index: " + rsci);
 	if (rsci) item.extra = "Цитируемость в РИНЦ: " + rsci;
 	*/
@@ -246,17 +246,9 @@ function scrape(doc, url) {
 		item.notes.push(note);
 	}*/
 	/*
-	if (codeBlock) {
-		item.extra += ' '+ doc.evaluate('.//td[2]', codeBlock, null,XPathResult.ANY_TYPE, null).iterateNext().textContent;
- 		var doi = item.extra.match(/DOI: (10\.[^\s]+)/);
- 		if (doi) {
-			item.DOI = doi[1];
-			item.extra = item.extra.replace(/DOI: 10\.[^\s]+/,"");
-		}
- 	}
-
-
 */
+	var doi = ZU.xpathText(doc, '/html/head/meta[@name="doi"]/@content');
+	if (doi) item.DOI = doi;
 
 	// if (pdf) item.attachments.push(pdf);
 
@@ -514,6 +506,80 @@ var testCases = [
 					},
 					{
 						"tag": "Учебное Пособие Для Высшей Школы"
+					}
+				],
+				"notes": [],
+				"seeAlso": []
+			}
+		]
+	},
+	{
+		"type": "web",
+		"url": "https://elibrary.ru/item.asp?id=38164350",
+		"items": [
+			{
+				"itemType": "journalArticle",
+				"title": "Графики негладких контактных отображений на группах карно с сублоренцевой структурой",
+				"creators": [
+					{
+						"firstName": "М. Б.",
+						"lastName": "Карманова",
+						"creatorType": "author"
+					}
+				],
+				"date": "2019",
+				"DOI": "10.31857/S0869-56524863275-279",
+				"ISSN": "0869-5652",
+				"issue": "3",
+				"language": "ru",
+				"libraryCatalog": "eLibrary.ru",
+				"pages": "275-279",
+				"publicationTitle": "Доклады Академии Наук",
+				"url": "https://elibrary.ru/item.asp?id=38164350",
+				"volume": "486",
+				"attachments": [],
+				"tags": [
+					{
+						"tag": "Contact Mapping"
+					},
+					{
+						"tag": "Graph-Mapping"
+					},
+					{
+						"tag": "Intrinsic Basis"
+					},
+					{
+						"tag": "Multidimensional Time"
+					},
+					{
+						"tag": "Nilpotent Graded Group"
+					},
+					{
+						"tag": "Sub-Lorentzian Structure"
+					},
+					{
+						"tag": "Surface Area"
+					},
+					{
+						"tag": "Внутренний Базис"
+					},
+					{
+						"tag": "Контактное Отображение"
+					},
+					{
+						"tag": "Многомерное Время"
+					},
+					{
+						"tag": "Нильпотентная Градуированная Группа"
+					},
+					{
+						"tag": "Отображение-График"
+					},
+					{
+						"tag": "Площадь Поверхности"
+					},
+					{
+						"tag": "Сублоренцева Структура"
 					}
 				],
 				"notes": [],
