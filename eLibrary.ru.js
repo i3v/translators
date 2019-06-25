@@ -142,20 +142,17 @@ function scrape(doc, url) {
 	item.title = fixCasing(item.title);
 	
 	var authors = ZU.xpath(doc, '//table[@width=550]//td[@width=514]/span[@style="white-space: nowrap"]//b');
-	if (!authors.length) {
-		authors = ZU.xpath(datablock, './div[1]/table[1]//b');
-	}
 	
 	Zotero.debug('authors.length: ' + authors.length);
-	Zotero.debug('authors text: ' + ZU.xpathText(authors, '*'));
 
 	for (var i = 0; i < authors.length; i++) {
+		
+		var cleaned = authors[i].textContent;
+		Zotero.debug('author[' + i + '] text: ' + cleaned);
 		
 		/* Some names listed as last first_initials (no comma), so we need
 		to fix this by placing a comma in-between.
 		Also note that the space between last and first is nbsp */
-		
-		var cleaned = authors[i].textContent;
 		var useComma = false;
 		if (cleaned.match(/[\s\u00A0]([A-Z\u0400-\u042f]\.?[\s\u00A0]*)+$/)) {
 			cleaned = cleaned.replace(/[\u00A0\s]/, ', ');
@@ -203,10 +200,11 @@ function scrape(doc, url) {
 			item[mapping[key]] = t;
 		}
 	}
+	
 	/*
-	// Times cited in Russian Science Citation Index. 
-	// Hardly useful for most users, would just clutter "extra" field.
-	// Keeping this just-in-case.
+	// Times-cited in Russian-Science-Citation-Index.
+	// This value is hardly useful for most users, would just clutter "extra" field.
+	// Keeping this code just-in-case.
 	var rsci = ZU.xpathText(doc, '//tr/td/text()[contains(., "Цитирований в РИНЦ")]/following-sibling::*[2]');
 	Zotero.debug("Russian Science Citation Index: " + rsci);
 	if (rsci) item.extra = "Цитируемость в РИНЦ: " + rsci;
@@ -248,8 +246,7 @@ function scrape(doc, url) {
 		Zotero.debug(note);
 		item.notes.push(note);
 	}*/
-	/*
-*/
+
 	var doi = ZU.xpathText(doc, '/html/head/meta[@name="doi"]/@content');
 	if (doi) item.DOI = doi;
 
