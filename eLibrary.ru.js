@@ -38,7 +38,7 @@
 
 function detectWeb(doc, url) {
 	if (url.match(/\/item.asp/)) {
-		return "journalArticle";
+		return getDocType(doc);
 	}
 	else if (url.match(/\/(query_results|contents|org_items|itembox_items)\.asp/)) {
 		return "multiple";
@@ -77,6 +77,32 @@ function fixCasing(string) {
 		return ZU.capitalizeTitle(string, true);
 	}
 	else return string;
+}
+
+function getDocType(doc) {
+	docType = ZU.xpathText(doc, '//tr/td/text()[contains(., "Тип:")]/following-sibling::*[1]');
+	
+	switch (docType) {
+		case "обзорная статья": // Would be "review article"
+		case "статья в журнале - научная статья":
+		case "научная статья":
+		case "статья в журнале":
+		case "статья в открытом архиве":
+			itemType = "journalArticle";
+			break;
+		case "учебное пособие":
+		case "монография":
+			itemType = "book";
+			break;
+		case "публикация в сборнике трудов конференции":
+			itemType = "conferencePaper";
+			break;
+		default:
+			Zotero.debug("Unknown type: " + docType + ". Using 'journalArticle'");
+			itemType = "journalArticle";
+			break;
+	}
+	return itemType
 }
 
 function scrape(doc, url) {
@@ -152,11 +178,11 @@ function scrape(doc, url) {
 		if (!cleaned.lastName.includes("@")) item.creators.push(cleaned);
 	}
 
-
 	var mapping = {
 		"Журнал": "publicationTitle",
 		"Издательство": "publisher",
 		"Дата депонирования": "date",
+		"Год издания": "date",
 		"Год": "date",
 		"Том": "volume",
 		"Номер": "issue",
@@ -164,8 +190,7 @@ function scrape(doc, url) {
 		"Число страниц": "pages", // e.g. "83"
 		"Страницы": "pages",      // e.g. "10-16"
 		"Язык": "language",
-		"Место издания": "place",
-		"Тип": "itemType"
+		"Место издания": "place"
 	};
 	
 	
@@ -192,28 +217,8 @@ function scrape(doc, url) {
 	var abstractBlock = ZU.xpath(datablock, "./table[6]")[0];
 	if (abstractBlock) item.abstractNote = ZU.xpathText(abstractBlock, './tbody/tr[2]/td[2]/p');
 
-	// Set type
-	switch (item.itemType) {
-		case "обзорная статья": // Would be "review article"
-		case "статья в журнале - научная статья":
-		case "научная статья":
-		case "статья в журнале":
-		case "статья в открытом архиве":
-			item.itemType = "journalArticle";
-			break;
-		case "учебное пособие":
-		case "монография":
-			item.itemType = "book";
-			break;
-		case "публикация в сборнике трудов конференции":
-			item.itemType = "conferencePaper";
-			break;
-		default:
-			Zotero.debug("Unknown type: " + item.itemType + ". Using 'journalArticle'");
-			item.itemType = "journalArticle";
-			break;
-	}
-
+	item.itemType = getDocType(doc);
+	
 		// Language to RFC-4646 code
 	switch (item.language) {
 		case "русский":
@@ -436,6 +441,73 @@ var testCases = [
 					},
 					{
 						"tag": "Царедворцы"
+					}
+				],
+				"notes": [],
+				"seeAlso": []
+			}
+		]
+	},
+	{
+		"type": "web",
+		"url": "https://elibrary.ru/item.asp?id=20028198",
+		"items": [
+			{
+				"itemType": "book",
+				"title": "Аппарат издания и правила оформления",
+				"creators": [
+					{
+						"firstName": "Людмила Павловна",
+						"lastName": "Стычишина",
+						"creatorType": "author"
+					},
+					{
+						"firstName": "А. В.",
+						"lastName": "Хохлов",
+						"creatorType": "author"
+					}
+				],
+				"language": "ru",
+				"libraryCatalog": "eLibrary.ru",
+				"publisher": "Изд-во Политехнического университета",
+				"url": "https://elibrary.ru/item.asp?id=20028198",
+				"attachments": [],
+				"tags": [
+					{
+						"tag": "Аппарат Издания"
+					},
+					{
+						"tag": "Издательское Дело"
+					},
+					{
+						"tag": "Культура. Наука. Просвещение"
+					},
+					{
+						"tag": "Оформление Изданий"
+					},
+					{
+						"tag": "Оформление Книги"
+					},
+					{
+						"tag": "Печать"
+					},
+					{
+						"tag": "Подготовка Рукописи И Графических Материалов К Изданию"
+					},
+					{
+						"tag": "Редакционно-Издательский Процесс"
+					},
+					{
+						"tag": "Российская Федерация"
+					},
+					{
+						"tag": "Теория И Практика Издательского Дела"
+					},
+					{
+						"tag": "Техническое Оформление"
+					},
+					{
+						"tag": "Учебное Пособие Для Высшей Школы"
 					}
 				],
 				"notes": [],
