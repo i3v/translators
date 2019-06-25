@@ -167,7 +167,7 @@ function scrape(doc) {
 	
 	
 	for (var key in mapping) {
-		var t = ZU.xpathText(doc, '//tr/td/text()[contains(., "' + key + '")]/following-sibling::*[1]');
+		var t = ZU.xpathText(doc, '//tr/td/text()[contains(., "' + key + ':")]/following-sibling::*[1]');
 		if (t) {
 			item[mapping[key]] = t;
 		}
