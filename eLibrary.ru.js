@@ -68,7 +68,7 @@ function doWeb(doc, url) {
 		});
 	}
 	else {
-		scrape(doc);
+		scrape(doc, url);
 	}
 }
 
@@ -79,9 +79,11 @@ function fixCasing(string) {
 	else return string;
 }
 
-function scrape(doc) {
+function scrape(doc, url) {
 	var datablock = ZU.xpath(doc, '//td[@align="left" and @valign="top"]//tr[2]/td[@align="left" and @valign="top"]');
 	var item = new Zotero.Item();
+	
+	item.url = url;
 	
 	/* var pdf = false;
 	// Now see if we have a free PDF to download
@@ -154,14 +156,13 @@ function scrape(doc) {
 	var mapping = {
 		"Журнал": "publicationTitle",
 		"Издательство": "publisher",
-		"Год": "date", // "Год выпуска:": "Год издания:"
+		"Год": "date",
 		"Том": "volume",
 		"Номер": "issue",
 		"ISSN": "ISSN",
 		"Страницы": "pages",
 		"Язык": "language",
 		"Место издания": "place",
-		"Цит. в РИНЦ": "extra",
 		"Тип": "itemType"
 	};
 	
@@ -266,6 +267,7 @@ var testCases = [
 				"attachments": [],
 				"tags": [],
 				"notes": [],
+				"url": "https://elibrary.ru/item.asp?id=9541154",
 				"seeAlso": []
 			}
 		]
@@ -323,6 +325,7 @@ var testCases = [
 					"Яблоня"
 				],
 				"notes": [],
+				"url": "https://elibrary.ru/item.asp?id=17339044",
 				"seeAlso": []
 			}
 		]
