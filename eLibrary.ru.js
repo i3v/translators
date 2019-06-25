@@ -200,8 +200,14 @@ function scrape(doc, url) {
 			item[mapping[key]] = t;
 		}
 	}
-
-	if (item.extra) item.extra = "Цитируемость в РИНЦ: " + item.extra;
+	/*
+	// Times cited in Russian Science Citation Index. 
+	// Hardly useful for most users, would just clutter "extra" field.
+	// Keeping this just-in-case.
+	rsci = ZU.xpathText(doc, '//tr/td/text()[contains(., "Цитирований в РИНЦ")]/following-sibling::*[2]');
+	Zotero.debug("Russian Science Citation Index: " + rsci);
+	if (rsci) item.extra = "Цитируемость в РИНЦ: " + rsci;
+	*/
 
 	var journalBlock = ZU.xpath(datablock, './div/table[tbody/tr/td/font[contains(text(), "ЖУРНАЛ")]]');
 	if (!item.publicationTitle) item.publicationTitle = ZU.xpathText(journalBlock, ".//a[1]");
