@@ -156,11 +156,13 @@ function scrape(doc, url) {
 	var mapping = {
 		"Журнал": "publicationTitle",
 		"Издательство": "publisher",
+		"Дата депонирования": "date",
 		"Год": "date",
 		"Том": "volume",
 		"Номер": "issue",
 		"ISSN": "ISSN",
-		"Страницы": "pages",
+		"Число страниц": "pages", // e.g. "83"
+		"Страницы": "pages",      // e.g. "10-16"
 		"Язык": "language",
 		"Место издания": "place",
 		"Тип": "itemType"
@@ -196,6 +198,7 @@ function scrape(doc, url) {
 		case "статья в журнале - научная статья":
 		case "научная статья":
 		case "статья в журнале":
+		case "статья в открытом архиве":
 			item.itemType = "journalArticle";
 			break;
 		case "учебное пособие":
@@ -249,6 +252,7 @@ function scrape(doc, url) {
 	item.complete();
 }
 
+
 /** BEGIN TEST CASES **/
 var testCases = [
 	{
@@ -277,10 +281,10 @@ var testCases = [
 				"libraryCatalog": "eLibrary.ru",
 				"pages": "40-58",
 				"publicationTitle": "Вестник Московского Университета. Серия 13: Востоковедение",
+				"url": "https://elibrary.ru/item.asp?id=9541154",
 				"attachments": [],
 				"tags": [],
 				"notes": [],
-				"url": "https://elibrary.ru/item.asp?id=9541154",
 				"seeAlso": []
 			}
 		]
@@ -326,6 +330,7 @@ var testCases = [
 				"libraryCatalog": "eLibrary.ru",
 				"pages": "1-10",
 				"publicationTitle": "Плодоводство И Виноградарство Юга России",
+				"url": "https://elibrary.ru/item.asp?id=17339044",
 				"attachments": [],
 				"tags": [
 					"Apple-Tree",
@@ -338,7 +343,48 @@ var testCases = [
 					"Яблоня"
 				],
 				"notes": [],
-				"url": "https://elibrary.ru/item.asp?id=17339044",
+				"seeAlso": []
+			}
+		]
+	},
+	{
+		"type": "web",
+		"url": "https://elibrary.ru/item.asp?id=21640363",
+		"items": [
+			{
+				"itemType": "journalArticle",
+				"title": "На пути к верификации C программ. Часть 3. Перевод из языка C-light в язык C-light-kernel и его формальное обоснование",
+				"creators": [
+					{
+						"firstName": "В. А.",
+						"lastName": "Непомнящий",
+						"creatorType": "author"
+					},
+					{
+						"firstName": "И. С.",
+						"lastName": "Ануреев",
+						"creatorType": "author"
+					},
+					{
+						"firstName": "И. Н.",
+						"lastName": "Михайлов",
+						"creatorType": "author"
+					},
+					{
+						"firstName": "А. В.",
+						"lastName": "Промский",
+						"creatorType": "author"
+					}
+				],
+				"date": "14.06.2002"
+				"pages": "83"
+				"issue": "097",
+				"language": "ru",
+				"libraryCatalog": "eLibrary.ru",
+				"url": "https://elibrary.ru/item.asp?id=21640363",
+				"attachments": [],
+				"tags": [],
+				"notes": [],
 				"seeAlso": []
 			}
 		]
