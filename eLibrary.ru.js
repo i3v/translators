@@ -160,20 +160,27 @@ function scrape(doc, url) {
 		}
 		
 		cleaned = ZU.cleanAuthor(cleaned, "author", useComma);
-		// If we have only one name, set the author to one-name mode
-		if (cleaned.firstName === "") {
+				
+		nameInitialsRE = new ZU.XRegExp("^\\p{Letter}\\.\\s\\p{Letter}\\.$");		
+		if (ZU.XRegExp.test(cleaned.firstName, nameInitialsRE)) {
+			/* If autor is "Ivanov I.V." or "Ivanov I. V.", 
+			   `cleaned.firstName` already contains space, e.g. "I. V.".
+			   But the `fixCasing` makes 2nd letter lowercase sometimes,
+			   for example, "S. V." -> "S. v.", but "S. K." -> "S. K.". 
+			   Thus, we treat initials as a special case. */
+			
+			// Nothing to do.
+		}
+		else if (cleaned.firstName === "") {
+			/* If we have only one name, set the author to one-name mode */
 			cleaned.fieldMode = true;
 		}
 		else {
-			// We can check for all lower-case and capitalize if necessary
-			// All-uppercase is handled by cleanAuthor
-			cleaned.firstName = (cleaned.firstName == cleaned.firstName.toLowerCase() || cleaned.firstName == cleaned.firstName.toUpperCase())
-				? Zotero.Utilities.capitalizeTitle(cleaned.firstName, true)
-				: cleaned.firstName;
-			cleaned.lastName = (cleaned.lastName == cleaned.lastName.toLowerCase() || cleaned.lastName == cleaned.lastName.toUpperCase())
-				? Zotero.Utilities.capitalizeTitle(cleaned.lastName, true)
-				: cleaned.lastName;
+			/* "IVAN" -> "Ivan" fix */
+			cleaned.firstName = fixCasing(cleaned.firstName);
 		}
+		cleaned.lastName = fixCasing(cleaned.lastName, true);
+		
 		// Skip entries with an @ sign-- email addresses slip in otherwise
 		if (!cleaned.lastName.includes("@")) item.creators.push(cleaned);
 	}
@@ -606,12 +613,12 @@ var testCases = [
 						"creatorType": "author"
 					},
 					{
-						"firstName": "S. v.",
+						"firstName": "S. V.",
 						"lastName": "Persiyantseva",
 						"creatorType": "author"
 					},
 					{
-						"firstName": "S. v.",
+						"firstName": "S. V.",
 						"lastName": "Yaroshevskaya",
 						"creatorType": "author"
 					}
