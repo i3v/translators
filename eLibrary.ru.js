@@ -147,38 +147,48 @@ function scrape(doc, url) {
 
 	for (var i = 0; i < authors.length; i++) {
 		
-		var cleaned = authors[i].textContent;
-		Zotero.debug('author[' + i + '] text: ' + cleaned);
+		var dirty = authors[i].textContent;
+		Zotero.debug('author[' + i + '] text: ' + dirty);
 		
-		/* Some names listed as last first_initials (no comma), so we need
-		to fix this by placing a comma in-between.
-		Also note that the space between last and first is nbsp */
-		var useComma = false;
-		if (cleaned.match(/[\s\u00A0]([A-Z\u0400-\u042f]\.?[\s\u00A0]*)+$/)) {
-			cleaned = cleaned.replace(/[\u00A0\s]/, ', ');
-			useComma = true;
-		}
-		
-		cleaned = ZU.cleanAuthor(cleaned, "author", useComma);
-				
-		nameInitialsRE = new ZU.XRegExp("^\\p{Letter}\\.\\s\\p{Letter}\\.$");		
-		if (ZU.XRegExp.test(cleaned.firstName, nameInitialsRE)) {
-			/* If autor is "Ivanov I.V." or "Ivanov I. V.", 
-			   `cleaned.firstName` already contains space, e.g. "I. V.".
-			   But the `fixCasing` makes 2nd letter lowercase sometimes,
-			   for example, "S. V." -> "S. v.", but "S. K." -> "S. K.". 
-			   Thus, we treat initials as a special case. */
+		/* Common author field formats are:
+			(1) "LAST FIRST PATRONIMIC"
+			(2) "LAST F. P." || "LAST F.P." || "LAST F.P" || "LAST F."
 			
-			// Nothing to do.
+		   In all these cases, we put comma after LAST for `ZU.cleanAuthor()` to work.
+		   Other formats are rare, but possible, e.g. "ВАН ДЕ КЕРЧОВЕ Р." == "Van de Kerchove R.".
+		   They go to single-field mode (assuming they got no comma). */
+		nameFormat1RE = new ZU.XRegExp("^\\p{Letter}+\\s\\p{Letter}+\\s\\p{Letter}+$");
+		nameFormat2RE = new ZU.XRegExp("^\\p{Letter}+\\s\\p{Letter}\\.(\\s?\\p{Letter}\\.?)?$");
+		
+		var isFormat1 = ZU.XRegExp.test(dirty, nameFormat1RE);
+		var isFormat2 = ZU.XRegExp.test(dirty, nameFormat2RE);
+		
+		if (isFormat1 || isFormat2) {
+			// add comma before the first space
+			dirty = dirty.replace(/^([^\s]*)(\s)/, '$1, ');
 		}
-		else if (cleaned.firstName === "") {
-			/* If we have only one name, set the author to one-name mode */
-			cleaned.fieldMode = true;
-		}
-		else {
-			/* "IVAN" -> "Ivan" fix */
+		
+		cleaned = ZU.cleanAuthor(dirty, "author", true);
+		
+		/* Now `cleaned.firstName` is: 
+		    (1) "FIRST PATRONIMIC"
+		    (2) "F. P." || "F."
+		    
+		   The `fixCasing()` makes 2nd letter lowercase sometimes,
+		   for example, "S. V." -> "S. v.", but "S. K." -> "S. K.". 
+		   Thus, we can only apply it to Format1 . */
+		
+		if (isFormat1) {
+			// "FIRST PATRONIMIC" -> "First Patronimic"
 			cleaned.firstName = fixCasing(cleaned.firstName);
 		}
+		
+		if (cleaned.firstName === undefined) {
+			// Unable to parse. Restore punctuation.
+			cleaned.fieldMode = true;
+			cleaned.lastName = dirty;
+		}
+		
 		cleaned.lastName = fixCasing(cleaned.lastName, true);
 		
 		// Skip entries with an @ sign-- email addresses slip in otherwise
@@ -631,6 +641,125 @@ var testCases = [
 				"url": "https://elibrary.ru/item.asp?id=30694319",
 				"attachments": [],
 				"tags": [],
+				"notes": [],
+				"seeAlso": []
+			}
+		]
+	},
+	{
+		"type": "web",
+		"url": "https://elibrary.ru/item.asp?id=18310800",
+		"items": [
+			{
+				"itemType": "journalArticle",
+				"title": "Обзор И Инвентаризация Археологических Раскопок В Долине Каракол (парк Уч-Энмек). Доклад Бельгийско-Российской Экспедиции В Алтайские Горы (2007-2008)",
+				"creators": [
+					{
+						"firstName": "Й.",
+						"lastName": "Боургеоис",
+						"creatorType": "author"
+					},
+					{
+						"firstName": "Щ.",
+						"lastName": "Гхеыле",
+						"creatorType": "author"
+					},
+					{
+						"firstName": "Р.",
+						"lastName": "Гооссенс",
+						"creatorType": "author"
+					},
+					{
+						"lastName": "Де Щулф А.",
+						"creatorType": "author",
+						"fieldMode": true
+					},
+					{
+						"firstName": "Е.",
+						"lastName": "Дворников",
+						"creatorType": "author"
+					},
+					{
+						"firstName": "А. В.",
+						"lastName": "Ебел",
+						"creatorType": "author"
+					},
+					{
+						"lastName": "Ван Хооф Л.",
+						"creatorType": "author",
+						"fieldMode": true,
+						"multi": {
+							"_key": {}
+						}
+					},
+					{
+						"firstName": "С.",
+						"lastName": "Лоуте",
+						"creatorType": "author"
+					},
+					{
+						"lastName": "Де Лангхе К.",
+						"creatorType": "author",
+						"fieldMode": true,
+						"multi": {
+							"_key": {}
+						}
+					},
+					{
+						"firstName": "А.",
+						"lastName": "Малмендиер",
+						"creatorType": "author"
+					},
+					{
+						"lastName": "Ван Де Керчове Р.",
+						"creatorType": "author",
+						"fieldMode": true
+					},
+					{
+						"firstName": "Р.",
+						"lastName": "Цаппелле",
+						"creatorType": "author"
+					},
+					{
+						"lastName": "Те Киефте Д.",
+						"creatorType": "author",
+						"fieldMode": true
+					}
+				],
+				"date": "2009",
+				"issue": "1 (4)",
+				"language": "ru",
+				"libraryCatalog": "eLibrary.ru",
+				"pages": "10-20",
+				"publicationTitle": "Мир Евразии",
+				"url": "https://elibrary.ru/item.asp?id=18310800",
+				"attachments": [],
+				"tags": [
+					{
+						"tag": "Belgian-Russian Expedition"
+					},
+					{
+						"tag": "Karakol"
+					},
+					{
+						"tag": "Scythian Culture"
+					},
+					{
+						"tag": "Uch Enmek Park"
+					},
+					{
+						"tag": "Бельгийско-Русская Экспедиция"
+					},
+					{
+						"tag": "Каракол"
+					},
+					{
+						"tag": "Парк Уч-Энмек"
+					},
+					{
+						"tag": "Скифская Культура"
+					}
+				],
 				"notes": [],
 				"seeAlso": []
 			}
