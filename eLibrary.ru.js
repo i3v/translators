@@ -48,14 +48,14 @@ function detectWeb(doc, url) {
 function doWeb(doc, url) {
 	var articles = [];
 	if (detectWeb(doc, url) == "multiple") {
-		var results = doc.evaluate('//table[@id="restab"]//tr[@bgcolor = "#f5f5f5"]/td[2]', doc, null, XPathResult.ANY_TYPE, null);
+		var results = ZU.xpath(doc, '//table[@id="restab"]/tbody/tr[starts-with(@id, "arw")]/td[2]');
+		Zotero.debug('results.length: ' + results.length);
 		var items = {};
-		var result;
-		while ((result = results.iterateNext())) {
-			var link = doc.evaluate('./a', result, null, XPathResult.ANY_TYPE, null).iterateNext();
-			var title = link.textContent;
-			var uri = link.href;
-			items[uri] = title;
+		for (var i = 0; i < results.length; i++) {
+			//Zotero.debug('result [' + i + '] text: ' + results[i].textContent);
+			var title = ZU.xpathText(results[i],'./a');
+			var uri = ZU.xpathText(results[i],'./a/@href');
+			items[uri] = fixCasing(title);
 		}
 		Zotero.selectItems(items, function (items) {
 			if (!items) {
