@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsbv",
-	"lastUpdated": "2019-06-21 22:52:13"
+	"lastUpdated": "2019-06-30 16:20:13"
 }
 
 /*
@@ -54,7 +54,7 @@ function doWeb(doc, url) {
 		for (var i = 0; i < results.length; i++) {
 			// Zotero.debug('result [' + i + '] text: ' + results[i].textContent);
 			var title = ZU.xpathText(results[i], './a');
-			var uri = ZU.xpathText(results[i],' ./a/@href');
+			var uri = ZU.xpathText(results[i], ' ./a/@href');
 			items[uri] = fixCasing(title);
 		}
 		Zotero.selectItems(items, function (items) {
@@ -144,7 +144,6 @@ function scrape(doc, url) {
 	Zotero.debug('authors.length: ' + authors.length);
 	
 	for (var i = 0; i < authors.length; i++) {
-		
 		var dirty = authors[i].textContent;
 		Zotero.debug('author[' + i + '] text: ' + dirty);
 		
