@@ -52,9 +52,9 @@ function doWeb(doc, url) {
 		Zotero.debug('results.length: ' + results.length);
 		var items = {};
 		for (var i = 0; i < results.length; i++) {
-			//Zotero.debug('result [' + i + '] text: ' + results[i].textContent); 
-			var title = ZU.xpathText(results[i],'./a');
-			var uri = ZU.xpathText(results[i],'./a/@href');
+			// Zotero.debug('result [' + i + '] text: ' + results[i].textContent);
+			var title = ZU.xpathText(results[i], './a');
+			var uri = ZU.xpathText(results[i],' ./a/@href');
 			items[uri] = fixCasing(title);
 		}
 		Zotero.selectItems(items, function (items) {
@@ -80,7 +80,8 @@ function fixCasing(string) {
 }
 
 function getDocType(doc) {
-	docType = ZU.xpathText(doc, '//tr/td/text()[contains(., "Тип:")]/following-sibling::*[1]');
+	var docType = ZU.xpathText(doc, '//tr/td/text()[contains(., "Тип:")]/following-sibling::*[1]');
+	var itemType;
 	
 	switch (docType) {
 		case "обзорная статья":
@@ -105,7 +106,7 @@ function getDocType(doc) {
 			itemType = "journalArticle";
 			break;
 	}
-	return itemType
+	return itemType;
 }
 
 function scrape(doc, url) {
@@ -132,7 +133,7 @@ function scrape(doc, url) {
 	
 	var m = doc.title.match(/eLIBRARY.RU - (.*)/);
 	if (m) item.title = m[1];
-	else   item.title = doc.title;
+	else item.title = doc.title;
 	
 	item.title = fixCasing(item.title);
 	
@@ -141,7 +142,7 @@ function scrape(doc, url) {
 	
 	var authors = ZU.xpath(datablock, './/table[@width=550]//td[@width=514]/span[@style="white-space: nowrap"]//b');
 	Zotero.debug('authors.length: ' + authors.length);
-
+	
 	for (var i = 0; i < authors.length; i++) {
 		
 		var dirty = authors[i].textContent;
@@ -154,8 +155,8 @@ function scrape(doc, url) {
 		   In all these cases, we put comma after LAST for `ZU.cleanAuthor()` to work.
 		   Other formats are rare, but possible, e.g. "ВАН ДЕ КЕРЧОВЕ Р." == "Van de Kerchove R.".
 		   They go to single-field mode (assuming they got no comma). */
-		nameFormat1RE = new ZU.XRegExp("^\\p{Letter}+\\s\\p{Letter}+\\s\\p{Letter}+$");
-		nameFormat2RE = new ZU.XRegExp("^\\p{Letter}+\\s\\p{Letter}\\.(\\s?\\p{Letter}\\.?)?$");
+		var nameFormat1RE = new ZU.XRegExp("^\\p{Letter}+\\s\\p{Letter}+\\s\\p{Letter}+$");
+		var nameFormat2RE = new ZU.XRegExp("^\\p{Letter}+\\s\\p{Letter}\\.(\\s?\\p{Letter}\\.?)?$");
 		
 		var isFormat1 = ZU.XRegExp.test(dirty, nameFormat1RE);
 		var isFormat2 = ZU.XRegExp.test(dirty, nameFormat2RE);
@@ -165,7 +166,7 @@ function scrape(doc, url) {
 			dirty = dirty.replace(/^([^\s]*)(\s)/, '$1, ');
 		}
 		
-		cleaned = ZU.cleanAuthor(dirty, "author", true);
+		var cleaned = ZU.cleanAuthor(dirty, "author", true);
 		
 		/* Now `cleaned.firstName` is:
 			(1) "FIRST PATRONIMIC"
@@ -201,7 +202,7 @@ function scrape(doc, url) {
 		"Номер": "issue",
 		"ISSN": "ISSN",
 		"Число страниц": "pages", // e.g. "83"
-		"Страницы": "pages",      // e.g. "10-16"
+		"Страницы": "pages", // e.g. "10-16"
 		"Язык": "language",
 		"Место издания": "place"
 	};
