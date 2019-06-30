@@ -685,10 +685,7 @@ var testCases = [
 					{
 						"lastName": "Ван Хооф Л.",
 						"creatorType": "author",
-						"fieldMode": true,
-						"multi": {
-							"_key": {}
-						}
+						"fieldMode": true
 					},
 					{
 						"firstName": "С.",
@@ -698,10 +695,7 @@ var testCases = [
 					{
 						"lastName": "Де Лангхе К.",
 						"creatorType": "author",
-						"fieldMode": true,
-						"multi": {
-							"_key": {}
-						}
+						"fieldMode": true
 					},
 					{
 						"firstName": "А.",
