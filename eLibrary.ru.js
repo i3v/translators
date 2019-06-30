@@ -167,12 +167,12 @@ function scrape(doc, url) {
 		
 		cleaned = ZU.cleanAuthor(dirty, "author", true);
 		
-		/* Now `cleaned.firstName` is: 
+		/* Now `cleaned.firstName` is:
 			(1) "FIRST PATRONIMIC"
 			(2) "F. P." || "F."
 			
 		   The `fixCasing()` makes 2nd letter lowercase sometimes,
-		   for example, "S. V." -> "S. v.", but "S. K." -> "S. K.". 
+		   for example, "S. V." -> "S. v.", but "S. K." -> "S. K.".
 		   Thus, we can only apply it to Format1 . */
 		
 		if (isFormat1) {
