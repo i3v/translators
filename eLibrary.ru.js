@@ -52,7 +52,7 @@ function doWeb(doc, url) {
 		Zotero.debug('results.length: ' + results.length);
 		var items = {};
 		for (var i = 0; i < results.length; i++) {
-			//Zotero.debug('result [' + i + '] text: ' + results[i].textContent);
+			//Zotero.debug('result [' + i + '] text: ' + results[i].textContent); 
 			var title = ZU.xpathText(results[i],'./a');
 			var uri = ZU.xpathText(results[i],'./a/@href');
 			items[uri] = fixCasing(title);
