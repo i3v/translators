@@ -109,9 +109,7 @@ function getDocType(doc) {
 }
 
 function scrape(doc, url) {
-	var datablock = ZU.xpath(doc, '//td[@align="left" and @valign="top"]//tr[2]/td[@align="left" and @valign="top"]');
 	var item = new Zotero.Item();
-	
 	item.url = url;
 	
 	/* var pdf = false;
@@ -131,18 +129,17 @@ function scrape(doc, url) {
 			pdf = {url:href, title:"eLibrary.ru полный текст", mimeType:"application/pdf"};
 		});
 	}*/
-
+	
 	var m = doc.title.match(/eLIBRARY.RU - (.*)/);
-	if (m) {
-		item.title = m[1];
-	}
-	else {
-		item.title = doc.title;
-	}
+	if (m) item.title = m[1];
+	else   item.title = doc.title;
+	
 	item.title = fixCasing(item.title);
 	
-	var authors = ZU.xpath(doc, '//table[@width=550]//td[@width=514]/span[@style="white-space: nowrap"]//b');
+	var centralColumn = ZU.xpath(doc, '//td[@align="left" and @valign="top" and table[1]/tbody/tr/td/text()[contains(.,"eLIBRARY ID:")]]');
+	var datablock = ZU.xpath(centralColumn, './div[contains(@style,"width:580px")]');
 	
+	var authors = ZU.xpath(datablock, './/table[@width=550]//td[@width=514]/span[@style="white-space: nowrap"]//b');
 	Zotero.debug('authors.length: ' + authors.length);
 
 	for (var i = 0; i < authors.length; i++) {
@@ -171,9 +168,9 @@ function scrape(doc, url) {
 		cleaned = ZU.cleanAuthor(dirty, "author", true);
 		
 		/* Now `cleaned.firstName` is: 
-		    (1) "FIRST PATRONIMIC"
-		    (2) "F. P." || "F."
-		    
+			(1) "FIRST PATRONIMIC"
+			(2) "F. P." || "F."
+			
 		   The `fixCasing()` makes 2nd letter lowercase sometimes,
 		   for example, "S. V." -> "S. v.", but "S. K." -> "S. K.". 
 		   Thus, we can only apply it to Format1 . */
@@ -196,7 +193,6 @@ function scrape(doc, url) {
 	}
 
 	var mapping = {
-		"Журнал": "publicationTitle",
 		"Издательство": "publisher",
 		"Дата депонирования": "date",
 		"Год издания": "date",
@@ -212,7 +208,7 @@ function scrape(doc, url) {
 	
 	
 	for (var key in mapping) {
-		var t = ZU.xpathText(doc, '//tr/td/text()[contains(., "' + key + ':")]/following-sibling::*[1]');
+		var t = ZU.xpathText(datablock, './/tr/td/text()[contains(., "' + key + ':")]/following-sibling::*[1]');
 		if (t) {
 			item[mapping[key]] = t;
 		}
@@ -227,23 +223,21 @@ function scrape(doc, url) {
 	if (rsci) item.extra = "Цитируемость в РИНЦ: " + rsci;
 	*/
 
-	var journalBlock = ZU.xpath(datablock, './div/table[tbody/tr/td/font[contains(text(), "ЖУРНАЛ")]]');
+	var journalBlock = ZU.xpath(datablock, './table/tbody[tr[1]/td/font[contains(text(), "ЖУРНАЛ:")]]/tr[2]/td[2]');
 	if (!item.publicationTitle) item.publicationTitle = ZU.xpathText(journalBlock, ".//a[1]");
 	item.publicationTitle = fixCasing(item.publicationTitle);
 
-	if (!item.ISSN) item.ISSN = ZU.xpathText(journalBlock, ".//tr[2]//font[last()]");
-
-	var tags = ZU.xpath(datablock, './div/table[tbody/tr/td/font[contains(text(), "КЛЮЧЕВЫЕ СЛОВА")]]//tr[2]/td/a');
+	var tags = ZU.xpath(datablock, './table[tbody/tr/td/font[contains(text(), "КЛЮЧЕВЫЕ СЛОВА:")]]//tr[2]/td/a');
 	for (var j = 0; j < tags.length; j++) {
 		item.tags.push(fixCasing(tags[j].textContent));
 	}
 
-	var abstractNote = ZU.xpathText(datablock, './div/table/tbody/tr[td/font[text() = "АННОТАЦИЯ:"]]/following-sibling::*[1]');
+	var abstractNote = ZU.xpathText(datablock, './table/tbody/tr[td/font[text() = "АННОТАЦИЯ:"]]/following-sibling::*[1]');
 	if (abstractNote) item.abstractNote = abstractNote;
 
 	item.itemType = getDocType(doc);
 	
-		// Language to RFC-4646 code
+	// Language to RFC-4646 code
 	switch (item.language) {
 		case "русский":
 			item.language = "ru";
